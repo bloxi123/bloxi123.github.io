@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bloxis try at wordle</title>
+    <title>bloxis try at worlde</title>
     <style>
         /* General Reset */
         * {
@@ -14,7 +14,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #66bb6a, #8e44ad); /* Blended green and purple background */
+            background-color: #f0f0f0; /* Clean grey background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,12 +24,34 @@
 
         .container {
             text-align: center;
+            background-color: #ffffff; /* White background for the game area */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         /* Header */
         h1 {
-            color: #ffffff;
+            color: #333333;
             margin-bottom: 20px;
+        }
+
+        /* Return button */
+        .return-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .return-btn:hover {
+            background-color: #5e3378;
         }
 
         /* Game grid */
@@ -88,7 +110,7 @@
         .feedback {
             margin-top: 20px;
             font-size: 1.2em;
-            color: #ffffff;
+            color: #333333;
         }
 
         /* Restart and Next button */
@@ -109,7 +131,7 @@
 
         .win-message {
             margin-top: 20px;
-            color: #ffffff;
+            color: #333333;
             font-size: 1.5em;
             display: none;
         }
@@ -117,8 +139,13 @@
 </head>
 <body>
 
+    <!-- Return to main site -->
+    <a href="https://bloxi123.github.io/home.html">
+        <button class="return-btn">Return</button>
+    </a>
+
     <div class="container">
-        <h1>bloxis try at wordle</h1>
+        <h1>bloxis try at worlde</h1>
         
         <!-- Grid for Wordle -->
         <div class="grid" id="grid"></div>
@@ -144,14 +171,14 @@
 
     <script>
         const wordList = [
-            ['CAT', 'DOG', 'BAT'],          // 3-letter words
-            ['FIRE', 'TREE', 'MOON'],       // 4-letter words
-            ['CHAIR', 'BREAD', 'HOUSE'],    // 5-letter words
-            ['PLANET', 'SILVER', 'GUITAR'], // 6-letter words
-            ['COMPUTER', 'PRINTER', 'STATION'], // 7-letter words
-            ['ELEPHANT', 'CROCODILE', 'MONITOR'], // 8-letter words
-            ['SATELLITE', 'PRESIDENT', 'GENERATOR'], // 9-letter words
-            ['MICROSCOPIC', 'UNDERGROUND', 'REGULATION'] // 10-letter words
+            ['CAT', 'DOG', 'BAT', 'RAT', 'MAP', 'SUN', 'HAT', 'PEN'],          // 3-letter words
+            ['FIRE', 'TREE', 'MOON', 'WIND', 'STAR', 'BIRD', 'FROG', 'HAND'],  // 4-letter words
+            ['CHAIR', 'BREAD', 'HOUSE', 'BRAVE', 'CLOUD', 'PLANE', 'FRUIT', 'TABLE'], // 5-letter words
+            ['PLANET', 'SILVER', 'GUITAR', 'MARKET', 'STORMY', 'TIGERS', 'HORSES', 'RIVER'], // 6-letter words
+            ['COMPUTER', 'SANDWICH', 'GUITAR', 'FESTIVAL', 'ELEPHANT', 'JOURNAL'], // 7-letter words
+            ['KNIGHTLY', 'DATABASE', 'CAPITALS', 'GUITARIST', 'HOSPITALS', 'CATERING'], // 8-letter words
+            ['CONCEPTS', 'STRATEGY', 'HOSPITALS', 'EXPRESSION', 'INFORMATION'], // 9-letter words
+            ['MICROSCOPIC', 'UNDERGROUND', 'REGULATION', 'INCONVENIENT', 'DISAPPOINTMENT'] // 10-letter words
         ];
 
         let currentWordLength = 3;
@@ -226,6 +253,8 @@
                 document.getElementById('feedbackMessage').innerText = "Game Over! The word was " + currentWord;
                 gameEnded = true;
                 document.getElementById('restartBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('feedbackMessage').innerText = "";
             }
         }
 
@@ -234,11 +263,11 @@
             currentWord = getRandomWord(currentWordLength);
             currentRow = 0;
             gameEnded = false;
-            createGrid(currentWordLength);
-            document.getElementById('guessInput').setAttribute('maxlength', currentWordLength);
-            document.getElementById('guessInput').setAttribute('placeholder', `Enter ${currentWordLength} letters`);
-            document.getElementById('feedbackMessage').innerText = '';
             document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('restartBtn').style.display = 'none';
+            document.getElementById('winMessage').style.display = 'none';
+            createGrid(currentWordLength);
+            document.getElementById('feedbackMessage').innerText = "";
         }
 
         function restartGame() {
@@ -246,7 +275,12 @@
             currentWord = getRandomWord(currentWordLength);
             currentRow = 0;
             gameEnded = false;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('restartBtn').style.display = 'none';
+            document.getElementById('winMessage').style.display = 'none';
             createGrid(currentWordLength);
-            document.getElementById('guessInput').setAttribute('maxlength', currentWordLength);
-            document.getElementById('guessInput').setAttribute('placeholder', `Enter ${currentWordLength} letters`);
-            document.getElementById('feedbackMessage').innerText = '';
+            document.getElementById('feedbackMessage').innerText = "";
+        }
+    </script>
+</body>
+</html>
