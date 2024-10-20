@@ -1,1 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bloxis try at wordle</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333333;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        /* Header */
+        h1 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        /* Game grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            grid-template-rows: repeat(6, 50px);
+            gap: 10px;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #cccccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333333;
+            background-color: #ffffff;
+        }
+
+        /* Input area */
+        .input-area {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 2px solid #cccccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #888888;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #555555;
+        }
+
+        /* Game feedback */
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>bloxis try at wordle</h1>
+        
+        <!-- Grid for Wordle -->
+        <div class="grid">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-area">
+            <input type="text" id="guessInput" maxlength="5" placeholder="Enter 5 letters">
+            <button onclick="submitGuess()">Submit</button>
+        </div>
+
+        <!-- Feedback message -->
+        <div class="feedback" id="feedbackMessage"></div>
+    </div>
+
+    <script>
+        const solution = "HELLO"; // Placeholder solution
+        let currentRow = 0;
+        let currentCol = 0;
+
+        function submitGuess() {
+            const guess = document.getElementById('guessInput').value.toUpperCase();
+            if (guess.length !== 5) {
+                document.getElementById('feedbackMessage').innerText = "Please enter a 5-letter word.";
+                return;
+            }
+
+            // Fill grid with guessed word
+            for (let i = 0; i < 5; i++) {
+                const cell = document.getElementsByClassName('cell')[(currentRow * 5) + i];
+                cell.innerText = guess[i];
+                if (guess[i] === solution[i]) {
+                    cell.style.backgroundColor = "#66bb6a"; // Green for correct
+                } else if (solution.includes(guess[i])) {
+                    cell.style.backgroundColor = "#f4d03f"; // Yellow for present but wrong position
+                } else {
+                    cell.style.backgroundColor = "#888888"; // Grey for incorrect
+                }
+            }
+
+            currentRow++;
+            document.getElementById('guessInput').value = "";
+
+            if (guess === solution) {
+                document.getElementById('feedbackMessage').innerText = "Congratulations! You guessed the word!";
+            } else if (currentRow >= 6) {
+                document.getElementById('feedbackMessage').innerText = "Game Over! The word was " + solution;
+            }
+        }
+    </script>
+
+</body>
+</html>
