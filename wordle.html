@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #f0f0f0;
+            background: linear-gradient(135deg, #66bb6a, #8e44ad); /* Blended green and purple background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -28,16 +28,18 @@
 
         /* Header */
         h1 {
-            color: #333333;
+            color: #ffffff;
             margin-bottom: 20px;
         }
 
         /* Game grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(5, 50px);
+            grid-template-columns: repeat(3, 50px); /* Starts with 3 columns for 3-letter word */
             grid-template-rows: repeat(6, 50px);
             gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
         .cell {
@@ -63,6 +65,7 @@
             border: 2px solid #cccccc;
             border-radius: 5px;
             font-size: 1em;
+            width: 150px; /* Enough space for longer words */
         }
 
         button {
@@ -85,7 +88,30 @@
         .feedback {
             margin-top: 20px;
             font-size: 1.2em;
-            color: #888888;
+            color: #ffffff;
+        }
+
+        /* Restart and Next button */
+        .next-btn, .restart-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #66bb6a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .next-btn:hover, .restart-btn:hover {
+            background-color: #555555;
+        }
+
+        .win-message {
+            margin-top: 20px;
+            color: #ffffff;
+            font-size: 1.5em;
+            display: none;
         }
     </style>
 </head>
@@ -95,73 +121,89 @@
         <h1>bloxis try at wordle</h1>
         
         <!-- Grid for Wordle -->
-        <div class="grid">
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-        </div>
+        <div class="grid" id="grid"></div>
 
         <!-- Input Section -->
         <div class="input-area">
-            <input type="text" id="guessInput" maxlength="5" placeholder="Enter 5 letters">
+            <input type="text" id="guessInput" maxlength="3" placeholder="Enter your guess">
             <button onclick="submitGuess()">Submit</button>
         </div>
 
         <!-- Feedback message -->
         <div class="feedback" id="feedbackMessage"></div>
+
+        <!-- Next button to expand word length -->
+        <button class="next-btn" id="nextBtn" style="display:none;" onclick="nextWord()">Next</button>
+
+        <!-- Restart button -->
+        <button class="restart-btn" id="restartBtn" style="display:none;" onclick="restartGame()">Restart</button>
+
+        <!-- Win screen message -->
+        <div class="win-message" id="winMessage">You’ve mastered the game! Congratulations!</div>
     </div>
 
     <script>
-        const solution = "HELLO"; // Placeholder solution
+        const wordList = [
+            ['CAT', 'DOG', 'BAT'],          // 3-letter words
+            ['FIRE', 'TREE', 'MOON'],       // 4-letter words
+            ['CHAIR', 'BREAD', 'HOUSE'],    // 5-letter words
+            ['PLANET', 'SILVER', 'GUITAR'], // 6-letter words
+            ['COMPUTER', 'PRINTER', 'STATION'], // 7-letter words
+            ['ELEPHANT', 'CROCODILE', 'MONITOR'], // 8-letter words
+            ['SATELLITE', 'PRESIDENT', 'GENERATOR'], // 9-letter words
+            ['MICROSCOPIC', 'UNDERGROUND', 'REGULATION'] // 10-letter words
+        ];
+
+        let currentWordLength = 3;
+        let currentWord = getRandomWord(currentWordLength);
         let currentRow = 0;
-        let currentCol = 0;
+        let maxRows = 6;
+        let gameEnded = false;
+
+        // Populate the initial grid
+        createGrid(currentWordLength);
+
+        // Add keypress event to submit guess on Enter
+        document.getElementById("guessInput").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                submitGuess();
+            }
+        });
+
+        function createGrid(wordLength) {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = ''; // Clear existing grid
+            grid.style.gridTemplateColumns = `repeat(${wordLength}, 50px)`; // Update column count
+            for (let i = 0; i < maxRows * wordLength; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                grid.appendChild(cell);
+            }
+        }
+
+        function getRandomWord(length) {
+            const wordArray = wordList[length - 3]; // Start from 3-letter word
+            return wordArray[Math.floor(Math.random() * wordArray.length)].toUpperCase();
+        }
 
         function submitGuess() {
+            if (gameEnded) return;
+
             const guess = document.getElementById('guessInput').value.toUpperCase();
-            if (guess.length !== 5) {
-                document.getElementById('feedbackMessage').innerText = "Please enter a 5-letter word.";
+            if (guess.length !== currentWordLength) {
+                document.getElementById('feedbackMessage').innerText = `Please enter a ${currentWordLength}-letter word.`;
                 return;
             }
 
+            const startIdx = currentRow * currentWordLength;
+
             // Fill grid with guessed word
-            for (let i = 0; i < 5; i++) {
-                const cell = document.getElementsByClassName('cell')[(currentRow * 5) + i];
+            for (let i = 0; i < currentWordLength; i++) {
+                const cell = document.getElementsByClassName('cell')[startIdx + i];
                 cell.innerText = guess[i];
-                if (guess[i] === solution[i]) {
+                if (guess[i] === currentWord[i]) {
                     cell.style.backgroundColor = "#66bb6a"; // Green for correct
-                } else if (solution.includes(guess[i])) {
+                } else if (currentWord.includes(guess[i])) {
                     cell.style.backgroundColor = "#f4d03f"; // Yellow for present but wrong position
                 } else {
                     cell.style.backgroundColor = "#888888"; // Grey for incorrect
@@ -171,13 +213,40 @@
             currentRow++;
             document.getElementById('guessInput').value = "";
 
-            if (guess === solution) {
+            if (guess === currentWord) {
                 document.getElementById('feedbackMessage').innerText = "Congratulations! You guessed the word!";
-            } else if (currentRow >= 6) {
-                document.getElementById('feedbackMessage').innerText = "Game Over! The word was " + solution;
+                gameEnded = true;
+                if (currentWordLength < 10) {
+                    document.getElementById('nextBtn').style.display = 'inline-block';
+                } else {
+                    document.getElementById('winMessage').style.display = 'block'; // Final win screen
+                    document.getElementById('restartBtn').style.display = 'inline-block';
+                }
+            } else if (currentRow >= maxRows) {
+                document.getElementById('feedbackMessage').innerText = "Game Over! The word was " + currentWord;
+                gameEnded = true;
+                document.getElementById('restartBtn').style.display = 'inline-block';
             }
         }
-    </script>
 
-</body>
-</html>
+        function nextWord() {
+            currentWordLength++;
+            currentWord = getRandomWord(currentWordLength);
+            currentRow = 0;
+            gameEnded = false;
+            createGrid(currentWordLength);
+            document.getElementById('guessInput').setAttribute('maxlength', currentWordLength);
+            document.getElementById('guessInput').setAttribute('placeholder', `Enter ${currentWordLength} letters`);
+            document.getElementById('feedbackMessage').innerText = '';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function restartGame() {
+            currentWordLength = 3;
+            currentWord = getRandomWord(currentWordLength);
+            currentRow = 0;
+            gameEnded = false;
+            createGrid(currentWordLength);
+            document.getElementById('guessInput').setAttribute('maxlength', currentWordLength);
+            document.getElementById('guessInput').setAttribute('placeholder', `Enter ${currentWordLength} letters`);
+            document.getElementById('feedbackMessage').innerText = '';
