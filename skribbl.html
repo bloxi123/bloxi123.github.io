@@ -1,1 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw & Guess Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #game-area {
+            width: 80%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        #players {
+            width: 25%;
+            background-color: #f2f2f2;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        #players ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #players ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        #canvas-container {
+            width: 70%;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #canvas {
+            width: 100%;
+            height: 400px;
+            background-color: #fff;
+            border: 1px solid #000;
+        }
+        #guess-input {
+            width: 100%;
+            margin-top: 10px;
+        }
+        #guess-input input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+        #guess-input button {
+            padding: 10px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Draw & Guess Game</h1>
 
+    <div id="game-area">
+        <!-- Player List -->
+        <div id="players">
+            <h3>Players</h3>
+            <ul>
+                <li>Player 1 (Score: 0)</li>
+                <li>Player 2 (Score: 0)</li>
+                <li>Player 3 (Score: 0)</li>
+            </ul>
+        </div>
+
+        <!-- Canvas Area -->
+        <div id="canvas-container">
+            <h3>Drawing Area</h3>
+            <div id="canvas">
+                <!-- No interactivity since JavaScript isn't allowed -->
+            </div>
+
+            <div id="guess-input">
+                <input type="text" placeholder="Enter your guess..." disabled />
+                <button disabled>Submit Guess</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
