@@ -1,0 +1,28 @@
+<!-- Client side (GitHub Pages) -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Output Display</title>
+</head>
+<body>
+    <div id="output"></div>
+    
+    <script>
+        // Listen for updates from localhost
+        async function fetchData() {
+            try {
+                const response = await fetch('http://localhost:3000/api/data');
+                const data = await response.json();
+                
+                // Update the display
+                document.getElementById('output').innerHTML = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Poll for updates every few seconds
+        setInterval(fetchData, 5000);
+    </script>
+</body>
+</html>
