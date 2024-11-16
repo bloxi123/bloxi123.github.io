@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Command Output</title>
+    <title>Input Display</title>
     <style>
         body {
             background-color: #1e1e1e;
@@ -18,52 +18,42 @@
             font-size: 14px;
             line-height: 1.4;
         }
-        .error {
-            color: #ff6b6b;
-        }
-        .timestamp {
-            color: #888;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
-    <div class="timestamp" id="timestamp"></div>
-    <div id="output">Waiting for command...</div>
+    <div id="output">Waiting for input...</div>
 
     <script>
         const outputDiv = document.getElementById('output');
-        const timestampDiv = document.getElementById('timestamp');
-        
-        function updateTimestamp() {
-            const now = new Date();
-            timestampDiv.textContent = `Last updated: ${now.toLocaleString()}`;
-        }
+        let lastText = '';
+        let hideTimeout;
 
-        async function fetchOutput() {
+        async function fetchInput() {
             try {
                 const response = await fetch('http://localhost:5000/get_latest');
                 const data = await response.json();
                 
-                let formattedOutput = data.output;
-                outputDiv.textContent = formattedOutput;
-                
-                if (data.error) {
-                    outputDiv.textContent += `\n\nError: ${data.error}`;
+                if (data.text !== lastText) {
+                    lastText = data.text;
+                    outputDiv.textContent = data.text;
+                    
+                    // Clear existing timeout if any
+                    if (hideTimeout) {
+                        clearTimeout(hideTimeout);
+                    }
+                    
+                    // Hide after 0.28 seconds
+                    hideTimeout = setTimeout(() => {
+                        outputDiv.textContent = '';
+                    }, 280);
                 }
-                
-                updateTimestamp();
             } catch (error) {
-                outputDiv.textContent = `Error connecting to local server: ${error}`;
+                console.error(error);
             }
         }
 
-        // Poll for updates every second
-        setInterval(fetchOutput, 1000);
-        
-        // Initial fetch
-        fetchOutput();
+        // Poll for updates every 100ms
+        setInterval(fetchInput, 100);
     </script>
 </body>
 </html>
