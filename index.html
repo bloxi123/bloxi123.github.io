@@ -1,28 +1,60 @@
-<!-- Client side (GitHub Pages) -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Output Display</title>
+    <title>Command Output</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #fff;
+            font-family: monospace;
+            margin: 20px;
+        }
+        #output {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .error {
+            color: #ff6b6b;
+        }
+    </style>
 </head>
 <body>
-    <div id="output"></div>
-    
+    <div id="output">Waiting for command output...</div>
+
     <script>
-        // Listen for updates from localhost
-        async function fetchData() {
+        const outputDiv = document.getElementById('output');
+        
+        // Function to fetch data from your local server
+        async function fetchOutput() {
             try {
-                const response = await fetch('http://localhost:3000/api/data');
+                const response = await fetch('http://localhost:5000/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ command: 'dir' }) // You can change this default command
+                });
+                
                 const data = await response.json();
                 
-                // Update the display
-                document.getElementById('output').innerHTML = JSON.stringify(data, null, 2);
+                // Display the output
+                outputDiv.innerHTML = data.output;
+                if (data.error) {
+                    outputDiv.innerHTML += `\n\n<span class="error">${data.error}</span>`;
+                }
             } catch (error) {
-                console.error('Error:', error);
+                outputDiv.innerHTML = `<span class="error">Error connecting to local server: ${error}</span>`;
             }
         }
 
-        // Poll for updates every few seconds
-        setInterval(fetchData, 5000);
+        // Poll for updates every 5 seconds
+        setInterval(fetchOutput, 5000);
+        
+        // Initial fetch
+        fetchOutput();
     </script>
 </body>
 </html>
