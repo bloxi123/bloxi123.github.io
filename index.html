@@ -6,7 +6,7 @@
         body {
             background-color: #1e1e1e;
             color: #fff;
-            font-family: monospace;
+            font-family: 'Consolas', monospace;
             margin: 20px;
         }
         #output {
@@ -15,43 +15,52 @@
             border-radius: 5px;
             white-space: pre-wrap;
             word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
         }
         .error {
             color: #ff6b6b;
         }
+        .timestamp {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
-    <div id="output">Waiting for command output...</div>
+    <div class="timestamp" id="timestamp"></div>
+    <div id="output">Waiting for command...</div>
 
     <script>
         const outputDiv = document.getElementById('output');
+        const timestampDiv = document.getElementById('timestamp');
         
-        // Function to fetch data from your local server
+        function updateTimestamp() {
+            const now = new Date();
+            timestampDiv.textContent = `Last updated: ${now.toLocaleString()}`;
+        }
+
         async function fetchOutput() {
             try {
-                const response = await fetch('http://localhost:5000/execute', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ command: 'dir' }) // You can change this default command
-                });
-                
+                const response = await fetch('http://localhost:5000/get_latest');
                 const data = await response.json();
                 
-                // Display the output
-                outputDiv.innerHTML = data.output;
+                let formattedOutput = data.output;
+                outputDiv.textContent = formattedOutput;
+                
                 if (data.error) {
-                    outputDiv.innerHTML += `\n\n<span class="error">${data.error}</span>`;
+                    outputDiv.textContent += `\n\nError: ${data.error}`;
                 }
+                
+                updateTimestamp();
             } catch (error) {
-                outputDiv.innerHTML = `<span class="error">Error connecting to local server: ${error}</span>`;
+                outputDiv.textContent = `Error connecting to local server: ${error}`;
             }
         }
 
-        // Poll for updates every 5 seconds
-        setInterval(fetchOutput, 5000);
+        // Poll for updates every second
+        setInterval(fetchOutput, 1000);
         
         // Initial fetch
         fetchOutput();
